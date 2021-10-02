@@ -6,7 +6,7 @@
  */
 
 // at the top of a cpp file always include the necessary header files
-#include "team/robot.h"
+#include "cautiontape/robot.h"
 
 //// include okapi's library. see documentation here: https://okapilib.github.io/OkapiLib/index.html
 //#include "okapi/api.hpp"
@@ -17,7 +17,7 @@ using namespace okapi::literals; // allows you to use
 using namespace std;
 
 /** Robot Sub Systems (intake, lift, etc) **/
-Motor lift(
+shared_ptr<Motor> lift = make_shared<Motor>(
         /** motor port 1-20 (don't use port 21 because it has less power) **/
         11,
 
@@ -111,6 +111,10 @@ shared_ptr<ChassisController> drive = ChassisControllerBuilder()
         .withMotors(
                 {1, -10}, // Left motors are 1 & 2 (reversed)
                 {-20, 11}    // Right motors are 3 & 4
+        )
+        .withSensors(
+            ADIEncoder{'A', 'B'}, // Left encoder in ADI ports A & B
+            ADIEncoder{'C', 'D', true}  // Right encoder in ADI ports C & D (reversed)
         )
         /**
          * This will set the dimensions of the drive. This is the most important part of your code, because
@@ -291,17 +295,17 @@ shared_ptr<ChassisController> drive = ChassisControllerBuilder()
 std::shared_ptr<Controller> master = std::make_shared<Controller>();
 ControllerButton a(ControllerDigital::A);
 // TODO: Uncomment the buttons below and initialize them see: https://okapilib.github.io/OkapiLib/classokapi_1_1ControllerButton.html
-//ControllerButton b();
-//ControllerButton x();
-//ControllerButton y();
-//ControllerButton r1();
-//ControllerButton r2();
-//ControllerButton l1();
-//ControllerButton l2();
-//ControllerButton up();
-//ControllerButton down();
-//ControllerButton left();
-//ControllerButton right();
+ControllerButton b(ControllerDigital::B);
+ControllerButton x(ControllerDigital::X);
+ControllerButton y(ControllerDigital::Y);
+ControllerButton r1(ControllerDigital::R1);
+ControllerButton r2(ControllerDigital::R2);
+ControllerButton l1(ControllerDigital::L1);
+ControllerButton l2(ControllerDigital::L2);
+ControllerButton up(ControllerDigital::up);
+ControllerButton down(ControllerDigital::down);
+ControllerButton left(ControllerDigital::left);
+ControllerButton right(ControllerDigital::right);
 
 /** Cool Stuff **/
 // position controller for the lift
@@ -309,4 +313,5 @@ ControllerButton a(ControllerDigital::A);
 //      how to program page 13-14: https://github.com/team914/autolib-pdfs/blob/master/pid-controllers.pdf
 //      how to program page 1-12: https://github.com/team914/autolib-pdfs/blob/master/pid-controllers.pdf
 // TODO: initialize the liftController so that it's usable see: https://okapilib.github.io/OkapiLib/md_docs_tutorials_walkthrough_liftMovement.html
-shared_ptr<AsyncPositionController<double, double>> liftController;
+shared_ptr<AsyncPosPIDController> liftController;
+

@@ -8,7 +8,7 @@
  */
 
 #include "main.h"
-#include "team/robot.h"
+#include "cautiontape/robot.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -94,6 +94,11 @@ void opcontrol() {
         drive->getModel()->driveVector(master->getAnalog(ControllerAnalog::rightY),
                                        master->getAnalog(ControllerAnalog::leftX));
 
+        if(r1.isPressed()) {
+          lift->moveVelocity(200);
+        } else if(r2.isPressed()) {
+          lift->moveVelocity(-200);
+        }
 
 		pros::delay(10);
 	}
